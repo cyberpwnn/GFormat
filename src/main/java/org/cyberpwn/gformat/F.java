@@ -32,6 +32,40 @@ public class F
 		}
 	}
 
+	public static String capitalize(String s)
+	{
+		String roll = "";
+		boolean f = true;
+
+		for(Character i : s.trim().toCharArray())
+		{
+			if(f)
+			{
+				roll += Character.toUpperCase(i);
+				f = false;
+			}
+
+			else
+			{
+				roll += i;
+			}
+		}
+
+		return roll;
+	}
+
+	public static String capitalizeWords(String s)
+	{
+		String rollx = "";
+
+		for(String i : s.trim().split(" "))
+		{
+			rollx += " " + capitalize(i.trim());
+		}
+
+		return rollx.substring(1);
+	}
+
 	public static String time(double ms, int prec)
 	{
 		if(ms < 1000.0)
