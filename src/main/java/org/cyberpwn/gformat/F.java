@@ -8,6 +8,8 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Formatter
@@ -66,6 +68,114 @@ public class F
 		return rollx.substring(1);
 	}
 
+	public static String wrap(String arg, int arg0)
+	{
+		return wrap(arg, arg0, (String) null, false);
+	}
+
+	public static String wrapWords(String arg, int arg0)
+	{
+		return wrap(arg, arg0, (String) null, true);
+	}
+
+	public static String wrap(String arg, int arg0, String arg1, boolean arg2)
+	{
+		return wrap(arg, arg0, arg1, arg2, " ");
+	}
+
+	public static String wrap(String arg, int arg0, String arg1, boolean arg2, String arg3)
+	{
+		if(arg == null)
+		{
+			return null;
+		}
+
+		else
+		{
+			if(arg1 == null)
+			{
+				arg1 = "\n";
+			}
+
+			if(arg0 < 1)
+			{
+				arg0 = 1;
+			}
+
+			if(arg3.trim().equals(""))
+			{
+				arg3 = " ";
+			}
+
+			Pattern arg4 = Pattern.compile(arg3);
+			int arg5 = arg.length();
+			int arg6 = 0;
+			StringBuilder arg7 = new StringBuilder(arg5 + 32);
+
+			while(arg6 < arg5)
+			{
+				int arg8 = -1;
+				Matcher arg9 = arg4.matcher(arg.substring(arg6, Math.min(arg6 + arg0 + 1, arg5)));
+				if(arg9.find())
+				{
+					if(arg9.start() == 0)
+					{
+						arg6 += arg9.end();
+						continue;
+					}
+
+					arg8 = arg9.start();
+				}
+
+				if(arg5 - arg6 <= arg0)
+				{
+					break;
+				}
+
+				while(arg9.find())
+				{
+					arg8 = arg9.start() + arg6;
+				}
+
+				if(arg8 >= arg6)
+				{
+					arg7.append(arg.substring(arg6, arg8));
+					arg7.append(arg1);
+					arg6 = arg8 + 1;
+				}
+				else if(arg2)
+				{
+					arg7.append(arg.substring(arg6, arg0 + arg6));
+					arg7.append(arg1);
+					arg6 += arg0;
+				}
+				else
+				{
+					arg9 = arg4.matcher(arg.substring(arg6 + arg0));
+					if(arg9.find())
+					{
+						arg8 = arg9.start() + arg6 + arg0;
+					}
+
+					if(arg8 >= 0)
+					{
+						arg7.append(arg.substring(arg6, arg8));
+						arg7.append(arg1);
+						arg6 = arg8 + 1;
+					}
+					else
+					{
+						arg7.append(arg.substring(arg6));
+						arg6 = arg5;
+					}
+				}
+			}
+
+			arg7.append(arg.substring(arg6));
+			return arg7.toString();
+		}
+	}
+
 	public static String time(double ms, int prec)
 	{
 		if(ms < 1000.0)
@@ -81,6 +191,31 @@ public class F
 		if(ms / 1000.0 / 60.0 < 60.0)
 		{
 			return F.f(ms / 1000.0 / 60.0, prec) + "m";
+		}
+
+		return F.f(ms, prec) + "ms";
+	}
+
+	public static String timeLong(long ms, int prec)
+	{
+		if(ms < 1000.0)
+		{
+			return F.f(ms, prec) + "ms";
+		}
+
+		if(ms / 1000.0 < 60.0)
+		{
+			return F.f(ms / 1000.0, prec) + " seconds";
+		}
+
+		if(ms / 1000.0 / 60.0 < 60.0)
+		{
+			return F.f(ms / 1000.0 / 60.0, prec) + " minutes";
+		}
+
+		if(ms / 1000.0 / 60.0 / 60.0 < 24.0)
+		{
+			return F.f(ms / 1000.0 / 60.0, prec) + " hours";
 		}
 
 		return F.f(ms, prec) + "ms";
