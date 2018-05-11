@@ -292,6 +292,11 @@ public class F
 		return ofSize(s, 1024);
 	}
 
+	public static String memSize(long s, int dec)
+	{
+		return ofSize(s, 1024, dec);
+	}
+
 	/**
 	 * Get the timestamp of the time t (ms since 1970)
 	 *
@@ -320,6 +325,46 @@ public class F
 	public static String ofSize(long s, int div)
 	{
 		Double d = (double) s;
+		String sub = "b";
+
+		if(d > div - 1)
+		{
+			d /= div;
+			sub = "k";
+
+			if(d > div - 1)
+			{
+				d /= div;
+				sub = "m";
+
+				if(d > div - 1)
+				{
+					d /= div;
+					sub = "g";
+
+					if(d > div - 1)
+					{
+						d /= div;
+						sub = "t";
+					}
+				}
+			}
+		}
+
+		if(sub.equals("GB") || sub.equals("TB"))
+		{
+			return F.f(d, 1) + sub;
+		}
+
+		else
+		{
+			return F.f(d, 0) + sub;
+		}
+	}
+
+	public static String ofSize(long s, int div, int dec)
+	{
+		Double d = (double) s;
 		String sub = "Bytes";
 
 		if(d > div - 1)
@@ -346,7 +391,7 @@ public class F
 			}
 		}
 
-		return F.f(d, 2) + " " + sub;
+		return F.f(d, dec) + " " + sub;
 	}
 
 	/**
